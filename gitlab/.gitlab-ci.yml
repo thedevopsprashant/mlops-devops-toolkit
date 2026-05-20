@@ -1,0 +1,23 @@
+stages:
+  - build
+  - scan
+  - deploy
+
+variables:
+  IMAGE_NAME: aiops-platform
+
+build:
+  stage: build
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker tag $IMAGE_NAME registry.example.com/$IMAGE_NAME
+
+security_scan:
+  stage: scan
+  script:
+    - trivy image registry.example.com/$IMAGE_NAME
+
+deploy:
+  stage: deploy
+  script:
+    - kubectl apply -f kubernetes/
